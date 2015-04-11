@@ -1,13 +1,12 @@
 // 
 // AAPL: 
 // Randoms: () / 5 = 
-// IF SIGNIFICANT JUMP
 
 module.exports = {
     shouldBuy: function(vars) {
-        return vars.price > vars.lastPrice && vars.direction === 'up' && vars.prevDirection === 'down';
+        return (vars.price < vars.lastPrice && vars.direction === 'down') || (Math.abs(vars.price - vars.lastSoldPrice) > vars.price / 100);
     },
     shouldSell: function(vars) {
-        return vars.price > vars.lastPrice && vars.direction === 'down' && vars.prevDirection === 'up';
+        return (vars.price < vars.lastPrice && vars.direction === 'up') || (Math.abs(vars.price - vars.lastBoughtPrice) > vars.price / 100);
     }
 };

@@ -1,0 +1,11 @@
+
+{"action":"none","price":127.1,"createdAt":"2015-04-11T16:29:22.255Z"}
+{"action":"none","price":127.1,"createdAt":"2015-04-11T16:29:28.443Z"}
+{"action":"none","price":127.1,"$":0,"createdAt":"2015-04-11T16:30:06.404Z"}
+{"action":"none","price":127.1,"$":0,"createdAt":"2015-04-11T16:30:07.576Z"}
+{"action":"none","price":127.1,"$":0,"createdAt":"2015-04-11T16:30:08.716Z"}
+{"action":"none","price":127.1,"$":0,"createdAt":"2015-04-11T16:30:15.872Z"}
+{"action":"none","price":127.1,"$":0,"direction":"up","prevDirection":"up","createdAt":"2015-04-11T16:30:39.742Z"}
+{"action":"buy","price":127.1,"$":110.30000000000007,"direction":"up","prevDirection":"up","own":true,"shares":7,"lastPrice":127.1,"lastBoughtPrice":127.1,"lastSoldPrice":0,"createdAt":"2015-04-11T16:32:18.572Z"}
+{"action":"none","price":127.1,"$":110.30000000000007,"direction":"up","prevDirection":"up","own":true,"shares":7,"lastPrice":127.1,"lastBoughtPrice":127.1,"lastSoldPrice":0,"createdAt":"2015-04-11T16:32:20.310Z"}
+{"action":"none","price":127.1,"$":110.30000000000007,"direction":"up","prevDirection":"up","own":true,"shares":7,"lastPrice":127.1,"lastBoughtPrice":127.1,"lastSoldPrice":0,"createdAt":"2015-04-11T16:32:21.517Z"}

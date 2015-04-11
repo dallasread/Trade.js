@@ -19,31 +19,33 @@ touch.sync(rootPath + '/logs/' + mode + '/' + algo + '.json');
 
 function log(vars) {
     vars.createdAt = new Date();
-    fs.appendFile(rootPath + '/logs/' + mode + '/' + algo + '.json', new Buffer('\n' + JSON.stringify(vars)));
+    fs.appendFile(rootPath + '/logs/' + mode + '/' + algo + '.json', '\n' + JSON.stringify(vars));
     return vars;
 }
 
 function updateVars(vars) {
     vars.price = Math.round(vars.price * 100) / 100;
-    fs.writeFileSync(rootPath + '/vars/' + mode + '/' + algo + '.json', new Buffer(JSON.stringify(vars)));
+    fs.writeFileSync(rootPath + '/vars/' + mode + '/' + algo + '.json', JSON.stringify(vars));
     return vars;
 }
 
 function sell(vars) {
     vars.action = 'sell';
-    vars.$ += vars.price * vars.shares;
+    vars.cash += vars.price * vars.shares;
     vars.lastSoldPrice = vars.price;
     vars.lastPrice = vars.price;
     vars.shares = 0;
+    vars.trades += 1;
     return vars;
 }
 
 function buy(vars) {
     vars.action = 'buy';
-    vars.shares = parseInt(Math.floor(vars.$ / vars.price));
-    vars.$ -= vars.price * vars.shares;
+    vars.shares = parseInt(Math.floor(vars.cash / vars.price));
+    vars.cash -= vars.price * vars.shares;
     vars.lastBoughtPrice = vars.price;
     vars.lastPrice = vars.price;
+    vars.trades += 1;
     return vars;
 }
 
@@ -71,6 +73,8 @@ function buyOrSell(vars) {
         buy(vars);
     }
     
+    vars.netWorth = vars.cash + (vars.price * vars.shares);
+    
     updateVars(vars);
     log(vars);
     
@@ -80,9 +84,10 @@ function buyOrSell(vars) {
 function checkStock(price) {
     var vars = fs.readFileSync(rootPath + '/vars/' + mode + '/' + algo + '.json', 'utf8');
     vars = vars.length ? JSON.parse(vars) : {};
-    
-    vars.$ = vars.$ || 1000;
-    vars.networth = vars.networth || vars.$;
+
+    vars.netWorth = vars.netWorth || vars.cash;
+    vars.trades = vars.trades || 0;
+    vars.cash = vars.cash || 1000;
     vars.price = vars.price || 0;
     vars.own = vars.own || false;
     vars.shares = vars.shares || 0;
@@ -92,6 +97,8 @@ function checkStock(price) {
     vars.lastPrice = vars.lastPrice || 0;
     vars.lastBoughtPrice = vars.lastBoughtPrice || 0;
     vars.lastSoldPrice = vars.lastSoldPrice || 0;
+    vars.mode = vars.mode || mode;
+    vars.algo = vars.algo || algo;
     
     if (price) {
         vars.newPrice = parseFloat(price);
@@ -102,7 +109,6 @@ function checkStock(price) {
     }
 
     vars = buyOrSell(vars);
-    vars.netWorth = vars.$ + (vars.price * vars.shares);
     return vars;
 }
 
@@ -112,7 +118,8 @@ function reset() {
     
     updateVars({
         'netWorth': 0,
-        '$': 1000, 
+        'trades': 0,
+        'cash': 1000, 
         'price': 0,
         'shares': 0,
         'action': 'none',
@@ -120,7 +127,9 @@ function reset() {
         'lastBoughtPrice': 0,
         'lastSoldPrice': 0,
         'own': false,
-        'direction': "up"
+        'direction': "up",
+        'mode': mode,
+        'algo': algo
     });
 }
 
@@ -137,10 +146,10 @@ function init() {
             break;
         case 'random':
             reset();
-            var p = 100;
-            for (var i = 0; i < 100; i++) {
+            var p = 30;
+            for (var i = 0; i < 8000; i++) {
                 updown = Math.random() < 0.5 ? -1 : 1;
-                p = Math.abs(p + (updown * Math.ceil(Math.random() * 10)));
+                p = Math.ceil(Math.abs(p + (updown * Math.round(Math.random() * p * 10) / 100)));
                 vars = checkStock( p );
             }
             break;
@@ -151,13 +160,13 @@ function init() {
     return vars;
 }
 
-var $ = 0;
+var cash = 0;
 if (mode === 'random') {
     var iterations = parseInt(process.argv[4] || 1);
-    $ = 0;
+    cash = 0;
     for (var i = 0; i < iterations; i++) {
         vars = init();
-        $ += vars.$;
+        cash += vars.cash;
     }
 } else {
     vars = init();

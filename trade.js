@@ -31,7 +31,6 @@ function updateVars(vars) {
 
 function sell(vars) {
     vars.action = 'sell';
-    vars.own = false;
     vars.$ += vars.price * vars.shares;
     vars.lastSoldPrice = vars.price;
     vars.lastPrice = vars.price;
@@ -41,7 +40,6 @@ function sell(vars) {
 
 function buy(vars) {
     vars.action = 'buy';
-    vars.own = true;
     vars.shares = parseInt(Math.floor(vars.$ / vars.price));
     vars.$ -= vars.price * vars.shares;
     vars.lastBoughtPrice = vars.price;
@@ -65,11 +63,11 @@ function buyOrSell(vars) {
     vars.price = vars.newPrice;
     delete vars.newPrice;
     
-    if (!vars.own && oldPrice === 0) {
+    if (vars.shares === 0 && oldPrice === 0) {
         buy(vars);
-    } else if (vars.own && algorithm.shouldSell(vars)) {
+    } else if (vars.shares > 0 && algorithm.shouldSell(vars)) {
         sell(vars);
-    } else if (!vars.own && algorithm.shouldBuy(vars)) {
+    } else if (vars.shares === 0 && algorithm.shouldBuy(vars)) {
         buy(vars);
     }
     
@@ -82,7 +80,9 @@ function buyOrSell(vars) {
 function checkStock(price) {
     var vars = fs.readFileSync(rootPath + '/vars/' + mode + '/' + algo + '.json', 'utf8');
     vars = vars.length ? JSON.parse(vars) : {};
+    
     vars.$ = vars.$ || 1000;
+    vars.networth = vars.networth || vars.$;
     vars.price = vars.price || 0;
     vars.own = vars.own || false;
     vars.shares = vars.shares || 0;
@@ -101,12 +101,27 @@ function checkStock(price) {
         vars.newPrice = parseFloat(data.query.results.quote.Ask);
     }
 
-    return buyOrSell(vars);
+    vars = buyOrSell(vars);
+    vars.netWorth = vars.$ + (vars.price * vars.shares);
+    return vars;
 }
 
 function reset() {
     fs.writeFileSync(rootPath + '/logs/' + mode + '/' + algo + '.json', new Buffer(''));
     fs.writeFileSync(rootPath + '/logs/' + mode + '/' + algo + '.json', new Buffer(''));
+    
+    updateVars({
+        'netWorth': 0,
+        '$': 1000, 
+        'price': 0,
+        'shares': 0,
+        'action': 'none',
+        'lastPrice': 0,
+        'lastBoughtPrice': 0,
+        'lastSoldPrice': 0,
+        'own': false,
+        'direction': "up"
+    });
 }
 
 function init() {
@@ -119,8 +134,6 @@ function init() {
             for (var i = 0; i < apr_10_aapl.length; i++) {
                 vars = checkStock( apr_10_aapl[i] );
             }
-            vars = sell(vars);
-            log(vars);
             break;
         case 'random':
             reset();
@@ -130,8 +143,6 @@ function init() {
                 p = Math.abs(p + (updown * Math.ceil(Math.random() * 10)));
                 vars = checkStock( p );
             }
-            vars = sell(vars);
-            log(vars);
             break;
         default:
             vars = checkStock();

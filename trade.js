@@ -31,7 +31,6 @@ function reset() {
         'lastPrice': 0,
         'lastBoughtPrice': 0,
         'lastSoldPrice': 0,
-        'own': false,
         'direction': "up",
         'mode': mode,
         'algo': algo
@@ -111,7 +110,6 @@ function checkStock(price) {
     vars.trades = vars.trades || 0;
     vars.cash = vars.cash || 1000;
     vars.price = vars.price || 0;
-    vars.own = vars.own || false;
     vars.shares = vars.shares || 0;
     vars.action = vars.action || 'none';
     vars.direction = vars.direction || 'up';

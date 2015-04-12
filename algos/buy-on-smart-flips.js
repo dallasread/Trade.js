@@ -4,14 +4,14 @@
 
 module.exports = {
     shouldBuy: function(vars) {
-		if (vars.price < vars.lastPrice && vars.direction === 'up' && vars.prevDirection === 'down') {
-			return true;
+		if ((vars.price < vars.lastPrice && vars.direction === 'up' && vars.prevDirection === 'down')) {
+			return true
 		}
 		
 		return false;
     },
     shouldSell: function(vars) {
-		if (vars.price > vars.lastPrice && vars.direction === 'down' && vars.prevDirection === 'up') {
+		if ((vars.price > vars.lastPrice && vars.direction === 'down' && vars.prevDirection === 'up')) {
 			return true;
 		}
 		

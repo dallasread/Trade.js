@@ -1,0 +1,24 @@
+{
+  "name": "trade.js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "trade.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dallasread/Trade.js.git"
+  },
+  "author": "Dallas Read",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dallasread/Trade.js/issues"
+  },
+  "homepage": "https://github.com/dallasread/Trade.js",
+  "dependencies": {
+    "mkdirp": "^0.5.0",
+    "touch": "0.0.3",
+    "urllib-sync": "^1.0.1"
+  }
+}
